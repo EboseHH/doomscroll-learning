@@ -566,7 +566,7 @@ h1 {
 .card-footer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   border-top: 1px solid #edf0e5;
   padding-top: 15px;
   font-size: 10px;

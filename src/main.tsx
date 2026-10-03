@@ -210,7 +210,6 @@ function App() {
               <br />
               More meaningful.
             </p>
-            <span>Small lessons. No finish line.</span>
           </div>
         </aside>
         <main id="main" tabIndex={-1}>
@@ -355,11 +354,11 @@ function App() {
                 available yet.
               </p>
             )}
-            <p className="browser-note">
-              {storageError
-                ? "Browser storage is unavailable. Your choices and saves will last for this visit only."
-                : "No account needed. Your choices and saves stay in this browser."}
-            </p>
+            {storageError && (
+              <p className="browser-note" role="status">
+                Browser storage is unavailable. Your choices and saves will last for this visit only.
+              </p>
+            )}
           </section>
           <div className="feed-toolbar">
             <div className="tabs" aria-label="Lesson feed">
@@ -458,10 +457,6 @@ function App() {
                       <span />
                       <span />
                     </div>
-                    <span className="art-number">
-                      FIELD NOTES /{" "}
-                      {String(lessons.indexOf(lesson) + 1).padStart(2, "0")}
-                    </span>
                     <span className="art-symbol">{interest?.symbol}</span>
                   </div>
                   <div className="lesson-body">
@@ -480,7 +475,6 @@ function App() {
                       <p>{lesson.takeaway}</p>
                     </div>
                     <div className="card-footer">
-                      <span>One scroll, one new idea.</span>
                       <button
                         className={`save-button ${isSaved ? "is-saved" : ""}`}
                         aria-label={`${isSaved ? "Unsave" : "Save"} lesson: ${lesson.title}`}
