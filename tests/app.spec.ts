@@ -4,6 +4,9 @@ test("mixed feed, personalisation, wildcard and dependent filters", async ({
   page,
 }) => {
   await page.goto("/");
+  await page
+    .getByRole("button", { name: "Edit interests", exact: true })
+    .click();
   await expect(page.locator("article")).toHaveCount(48);
   await page
     .getByRole("button", { name: "Nature", exact: true })
@@ -11,7 +14,7 @@ test("mixed feed, personalisation, wildcard and dependent filters", async ({
     .click();
   await expect(page.locator("article")).toHaveCount(3);
   await page
-    .getByRole("button", { name: "Design", exact: true })
+    .getByRole("button", { name: "Product design", exact: true })
     .last()
     .click();
   await expect(page.locator("article")).toHaveCount(6);
@@ -36,13 +39,16 @@ test("mixed feed, personalisation, wildcard and dependent filters", async ({
   await page
     .getByRole("combobox", { name: "Filter by interest" })
     .selectOption("science");
-  await expect(page.locator("article")).toHaveCount(7);
+  await expect(page.locator("article")).toHaveCount(4);
   await page.getByRole("button", { name: "For you", exact: true }).click();
   await expect(page.locator("article")).toHaveCount(6);
 });
 
 test("saving, unsaving, empty states and persistence", async ({ page }) => {
   await page.goto("/");
+  await page
+    .getByRole("button", { name: "Edit interests", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "Saved lessons 0", exact: true })
     .click();
@@ -96,6 +102,9 @@ test("corrupt storage is safe, interest controls work with keyboard, mobile has 
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
+  await page
+    .getByRole("button", { name: "Edit interests", exact: true })
+    .click();
   await expect(page.locator("article")).toHaveCount(48);
   await expect(
     page.getByRole("button", { name: "Saved 1", exact: true }),
@@ -121,6 +130,9 @@ test("unavailable storage explains session-only saves", async ({ page }) => {
     };
   });
   await page.goto("/");
+  await page
+    .getByRole("button", { name: "Edit interests", exact: true })
+    .click();
   await expect(
     page.getByText("Browser storage is unavailable.", { exact: false }),
   ).toBeVisible();
@@ -139,6 +151,8 @@ test("prepared content has unique IDs and valid relationships", async () => {
   for (const collection of [interests, topics, lessons])
     expect(new Set(collection.map((x) => x.id)).size).toBe(collection.length);
   expect(lessons.length).toBeGreaterThanOrEqual(12);
+  expect(interests).toHaveLength(50);
+  expect(interests.some((i) => i.id === "wildcard")).toBe(false);
   for (const topic of topics)
     expect(
       topic.interest_id === null ||
@@ -155,6 +169,9 @@ test("feed controls and content meet automated accessibility checks", async ({
 }) => {
   const { default: AxeBuilder } = await import("@axe-core/playwright");
   await page.goto("/");
+  await page
+    .getByRole("button", { name: "Edit interests", exact: true })
+    .click();
   const results = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
     .analyze();
@@ -170,6 +187,9 @@ test("parenting and SQL collections filter and save correctly", async ({
   page,
 }) => {
   await page.goto("/");
+  await page
+    .getByRole("button", { name: "Edit interests", exact: true })
+    .click();
   await page
     .getByRole("button", { name: "SQL & data", exact: true })
     .last()
@@ -202,4 +222,74 @@ test("parenting and SQL collections filter and save correctly", async ({
       name: "Start a difficult conversation by listening.",
     }),
   ).toBeVisible();
+});
+
+test("search, forthcoming interests and Wildcard fallback", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "Edit interests", exact: true })
+    .click();
+  const search = page.getByRole("searchbox", { name: "Search 50 interests" });
+  await expect(search).toBeFocused();
+  await search.fill("fashion");
+  await expect(page.locator(".picker-option")).toHaveCount(1);
+  await expect(
+    page.getByRole("button", { name: "Fashion", exact: true }),
+  ).toContainText("Coming soon");
+  await page.getByRole("button", { name: "Fashion", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Your interests are coming soon." }),
+  ).toBeVisible();
+  await page
+    .getByRole("button", { name: "Explore Wildcard", exact: true })
+    .click();
+  await expect(page.locator("article")).toHaveCount(48);
+  await search.fill("no-such-interest");
+  await expect(
+    page.getByText("No interests match. Try another search."),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Done", exact: true }).click();
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Remove Fashion", exact: true }),
+  ).toBeVisible();
+});
+
+test("legacy interests migrate once and saved lesson IDs survive", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    localStorage.removeItem("doomscroll.catalogVersion");
+    localStorage.setItem(
+      "doomscroll.interests",
+      JSON.stringify(["science", "culture", "design"]),
+    );
+    localStorage.setItem(
+      "doomscroll.saved",
+      JSON.stringify(["moon", "words", "space-design"]),
+    );
+  });
+  await page.reload();
+  for (const name of [
+    "Science",
+    "Space",
+    "Culture & traditions",
+    "Languages",
+    "History",
+    "Product design",
+  ])
+    await expect(
+      page.getByRole("button", { name: `Remove ${name}`, exact: true }),
+    ).toBeVisible();
+  await expect(page.locator("article")).toHaveCount(16);
+  await page.getByRole("button", { name: "Remove Space", exact: true }).click();
+  await page.reload();
+  await expect(
+    page.getByRole("button", { name: "Remove Space", exact: true }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Saved 3", exact: true }).click();
+  await expect(page.locator("article")).toHaveCount(3);
 });

@@ -803,3 +803,76 @@ h1 {
     top: 15px;
   }
 }
+.interest-picker {
+  margin-top: 18px;
+  border-top: 1px solid #d0d7c7;
+  padding-top: 18px;
+}
+.interest-picker label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.interest-picker input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #9eae93;
+  border-radius: 7px;
+  font: inherit;
+  font-size: 14px;
+  background: #fffef9;
+  color: #29372e;
+}
+.interest-picker input:focus-visible {
+  outline: 3px solid #a76828;
+  outline-offset: 2px;
+}
+.picker-help {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #536448;
+}
+.picker-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  max-height: 330px;
+  overflow: auto;
+  padding: 5px;
+}
+.picker-option {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  border: 1px solid #ccd5c1;
+  border-radius: 7px;
+  background: #fffef9;
+  padding: 12px;
+  font-size: 12px;
+}
+.picker-option.selected {
+  background: #dfe8d8;
+  border-color: #537650;
+}
+.picker-option small {
+  display: block;
+  margin-top: 4px;
+  font-size: 10px;
+  color: #536448;
+}
+.picker-option > svg {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.sidebar-interests {
+  max-height: 300px;
+  overflow: auto;
+  padding: 4px;
+}
+@media (max-width: 450px) {
+  .picker-results {
+    grid-template-columns: 1fr;
+  }
+}

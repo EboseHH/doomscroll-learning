@@ -12,7 +12,15 @@ import {
   Leaf,
   BookOpen,
 } from "lucide-react";
-import { interests, topics, lessons, topicFor, interestFor } from "./data";
+import {
+  interests,
+  topics,
+  lessons,
+  topicFor,
+  interestFor,
+  lessonCount,
+  migrateInterestIds,
+} from "./data";
 import "@fontsource/dm-sans/400.css";
 import "@fontsource/dm-sans/500.css";
 import "@fontsource/dm-sans/600.css";
@@ -37,12 +45,19 @@ function readIds(key: string, valid: string[]) {
   }
 }
 function App() {
-  const [selected, setSelected] = useState(() =>
-    readIds(
+  const [selected, setSelected] = useState(() => {
+    const ids = readIds(
       "doomscroll.interests",
       interests.map((i) => i.id),
-    ),
-  );
+    );
+    try {
+      return localStorage.getItem("doomscroll.catalogVersion") === "2"
+        ? ids
+        : migrateInterestIds(ids);
+    } catch {
+      return ids;
+    }
+  });
   const [saved, setSaved] = useState(() =>
     readIds(
       "doomscroll.saved",
@@ -53,12 +68,14 @@ function App() {
   const [interestFilter, setInterestFilter] = useState("");
   const [topicFilter, setTopicFilter] = useState("");
   const [editing, setEditing] = useState(false);
+  const [search, setSearch] = useState("");
   const [storageError, setStorageError] = useState(false);
   const [notice, setNotice] = useState("");
   const interestOptions = useRef<HTMLDivElement>(null);
   useEffect(() => {
     try {
       localStorage.setItem("doomscroll.interests", JSON.stringify(selected));
+      localStorage.setItem("doomscroll.catalogVersion", "2");
       localStorage.setItem("doomscroll.saved", JSON.stringify(saved));
       setStorageError(false);
     } catch {
@@ -67,7 +84,7 @@ function App() {
   }, [selected, saved]);
   useEffect(() => {
     if (!editing) return;
-    interestOptions.current?.querySelector("button")?.focus();
+    interestOptions.current?.querySelector("input")?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setEditing(false);
     };
@@ -170,7 +187,7 @@ function App() {
           <div className="sidebar-interests">
             {(selected.length
               ? interests.filter((i) => selected.includes(i.id))
-              : interests
+              : interests.filter((i) => lessonCount(i.id) > 0).slice(0, 6)
             ).map((i) => (
               <button
                 key={i.id}
@@ -233,7 +250,7 @@ function App() {
                 className="edit-button"
                 onClick={() => setEditing(!editing)}
                 aria-expanded={editing}
-                aria-controls="interest-options"
+                aria-controls={editing ? "interest-options" : undefined}
               >
                 {editing ? <X size={16} /> : <SlidersHorizontal size={16} />}{" "}
                 {editing ? "Done" : "Edit interests"}
@@ -241,32 +258,103 @@ function App() {
             </div>
             <div
               className="interest-chips"
-              id="interest-options"
-              ref={interestOptions}
+              role="group"
+              aria-label="Selected interests"
             >
-              {interests.map((i) => (
-                <button
-                  key={i.id}
-                  className={`interest-chip ${selected.includes(i.id) ? "selected" : ""}`}
-                  aria-pressed={selected.includes(i.id)}
-                  onClick={() => {
-                    setSelected((prev) =>
-                      prev.includes(i.id)
-                        ? prev.filter((x) => x !== i.id)
-                        : [...prev, i.id],
-                    );
-                    setInterestFilter("");
-                    setTopicFilter("");
-                  }}
-                >
-                  <span aria-hidden="true" className={`chip-symbol ${i.color}`}>
-                    {i.symbol}
-                  </span>
-                  {i.name}
-                  {selected.includes(i.id) && <Check size={14} />}
-                </button>
-              ))}
+              {interests
+                .filter((i) => selected.includes(i.id))
+                .map((i) => (
+                  <button
+                    key={i.id}
+                    className="interest-chip selected"
+                    aria-label={`Remove ${i.name}`}
+                    onClick={() => {
+                      setSelected((prev) => prev.filter((id) => id !== i.id));
+                      setInterestFilter("");
+                      setTopicFilter("");
+                    }}
+                  >
+                    <span aria-hidden="true">{i.symbol}</span>
+                    {i.name}
+                    <X size={14} />
+                  </button>
+                ))}
             </div>
+            {editing && (
+              <div
+                id="interest-options"
+                ref={interestOptions}
+                className="interest-picker"
+              >
+                <label htmlFor="interest-search">Search 50 interests</label>
+                <input
+                  id="interest-search"
+                  type="search"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Try fashion, SQL or parenting"
+                />
+                <p className="picker-help">
+                  Select as many as you like. “Coming soon” interests can be
+                  followed now; lessons will be added later. Wildcard explores
+                  all published lessons.
+                </p>
+                <div className="picker-results">
+                  {interests
+                    .filter((i) =>
+                      i.name
+                        .toLowerCase()
+                        .includes(search.trim().toLowerCase()),
+                    )
+                    .map((i) => (
+                      <button
+                        key={i.id}
+                        className={`picker-option ${selected.includes(i.id) ? "selected" : ""}`}
+                        aria-label={i.name}
+                        aria-pressed={selected.includes(i.id)}
+                        onClick={() => {
+                          setSelected((prev) =>
+                            prev.includes(i.id)
+                              ? prev.filter((id) => id !== i.id)
+                              : [...prev, i.id],
+                          );
+                          setInterestFilter("");
+                          setTopicFilter("");
+                        }}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className={`small-symbol ${i.color}`}
+                        >
+                          {i.symbol}
+                        </span>
+                        <span>
+                          {i.name}
+                          <small>
+                            {lessonCount(i.id)
+                              ? `${lessonCount(i.id)} lessons`
+                              : "Coming soon"}
+                          </small>
+                        </span>
+                        {selected.includes(i.id) && (
+                          <Check size={16} aria-hidden="true" />
+                        )}
+                      </button>
+                    ))}
+                </div>
+                {!interests.some((i) =>
+                  i.name.toLowerCase().includes(search.trim().toLowerCase()),
+                ) && (
+                  <p role="status">No interests match. Try another search.</p>
+                )}
+              </div>
+            )}
+            {selected.some((id) => !lessonCount(id)) && (
+              <p className="browser-note">
+                Some selected interests are coming soon. Their lessons are not
+                available yet.
+              </p>
+            )}
             <p className="browser-note">
               {storageError
                 ? "Browser storage is unavailable. Your choices and saves will last for this visit only."
@@ -317,6 +405,7 @@ function App() {
                 {filterInterests.map((i) => (
                   <option key={i.id} value={i.id}>
                     {i.name}
+                    {!lessonCount(i.id) ? " (coming soon)" : ""}
                   </option>
                 ))}
               </select>
@@ -420,16 +509,31 @@ function App() {
                 <h2>
                   {mode === "saved" && !saved.length
                     ? "Your next favourite is out there."
-                    : "No lessons in this little corner yet."}
+                    : mode === "you" &&
+                        selected.length > 0 &&
+                        selected.every((id) => !lessonCount(id))
+                      ? "Your interests are coming soon."
+                      : "No lessons in this little corner yet."}
                 </h2>
                 <p>
                   {mode === "saved" && !saved.length
                     ? "Save a lesson as you scroll. It will be waiting for you here."
-                    : "Try another topic or clear your filters to keep exploring."}
+                    : mode === "you" &&
+                        selected.length > 0 &&
+                        selected.every((id) => !lessonCount(id))
+                      ? "You can keep these interests selected and explore published lessons in Wildcard."
+                      : "Try another topic or clear your filters to keep exploring."}
                 </p>
                 <button
                   onClick={() => {
-                    if (mode === "saved" && !saved.length) changeMode("you");
+                    if (
+                      mode === "you" &&
+                      selected.length > 0 &&
+                      selected.every((id) => !lessonCount(id))
+                    )
+                      changeMode("wildcard");
+                    else if (mode === "saved" && !saved.length)
+                      changeMode("you");
                     else {
                       setInterestFilter("");
                       setTopicFilter("");
@@ -438,7 +542,11 @@ function App() {
                 >
                   {mode === "saved" && !saved.length
                     ? "Explore lessons"
-                    : "Clear filters"}
+                    : mode === "you" &&
+                        selected.length > 0 &&
+                        selected.every((id) => !lessonCount(id))
+                      ? "Explore Wildcard"
+                      : "Clear filters"}
                 </button>
               </div>
             )}

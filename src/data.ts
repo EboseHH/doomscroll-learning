@@ -13,17 +13,111 @@ export type Lesson = {
   takeaway: string;
 };
 export const interests: Interest[] = [
-  { id: "technology", name: "Technology", symbol: "\u2318", color: "blue" },
-  { id: "sql", name: "SQL & data", symbol: "\u25a4", color: "orange" },
-  { id: "parenting", name: "Parenting", symbol: "♡", color: "green" },
-  { id: "career", name: "Career growth", symbol: "↗", color: "blue" },
-  { id: "workplace", name: "Workplace skills", symbol: "◒", color: "pink" },
-  { id: "time", name: "Managing your time", symbol: "◷", color: "orange" },
-  { id: "digital", name: "Digital confidence", symbol: "✦", color: "blue" },
-  { id: "nature", name: "Nature", symbol: "✳", color: "green" },
-  { id: "design", name: "Design", symbol: "◒", color: "pink" },
-  { id: "science", name: "Science", symbol: "✦", color: "blue" },
-  { id: "culture", name: "Culture", symbol: "◎", color: "orange" },
+  { id: "fashion", name: "Fashion", symbol: "◒", color: "pink" },
+  { id: "technology", name: "Technology", symbol: "✦", color: "blue" },
+  { id: "ai", name: "AI", symbol: "◎", color: "orange" },
+  { id: "sql", name: "SQL & data", symbol: "✳", color: "green" },
+  { id: "science", name: "Science", symbol: "◒", color: "pink" },
+  { id: "nature", name: "Nature", symbol: "✦", color: "blue" },
+  { id: "space", name: "Space", symbol: "◎", color: "orange" },
+  { id: "history", name: "History", symbol: "✳", color: "green" },
+  { id: "geography", name: "Geography", symbol: "◒", color: "pink" },
+  { id: "culture", name: "Culture & traditions", symbol: "✦", color: "blue" },
+  { id: "languages", name: "Languages", symbol: "◎", color: "orange" },
+  {
+    id: "books-literature",
+    name: "Books & literature",
+    symbol: "✳",
+    color: "green",
+  },
+  {
+    id: "creative-writing",
+    name: "Creative writing",
+    symbol: "◒",
+    color: "pink",
+  },
+  { id: "philosophy", name: "Philosophy", symbol: "✦", color: "blue" },
+  {
+    id: "politics-government",
+    name: "Politics & government",
+    symbol: "◎",
+    color: "orange",
+  },
+  {
+    id: "current-affairs",
+    name: "Current affairs",
+    symbol: "✳",
+    color: "green",
+  },
+  {
+    id: "personal-finance",
+    name: "Personal finance",
+    symbol: "◒",
+    color: "pink",
+  },
+  { id: "economics", name: "Economics", symbol: "✦", color: "blue" },
+  { id: "career", name: "Career growth", symbol: "◎", color: "orange" },
+  { id: "workplace", name: "Workplace skills", symbol: "✳", color: "green" },
+  { id: "time", name: "Managing your time", symbol: "◒", color: "pink" },
+  { id: "parenting", name: "Parenting", symbol: "✦", color: "blue" },
+  {
+    id: "health-wellbeing",
+    name: "Health & wellbeing",
+    symbol: "◎",
+    color: "orange",
+  },
+  { id: "fitness", name: "Fitness", symbol: "✳", color: "green" },
+  { id: "nutrition", name: "Nutrition", symbol: "◒", color: "pink" },
+  { id: "psychology", name: "Psychology", symbol: "✦", color: "blue" },
+  {
+    id: "human-behaviour",
+    name: "Human behaviour",
+    symbol: "◎",
+    color: "orange",
+  },
+  { id: "relationships", name: "Relationships", symbol: "✳", color: "green" },
+  { id: "communication", name: "Communication", symbol: "◒", color: "pink" },
+  { id: "leadership", name: "Leadership", symbol: "✦", color: "blue" },
+  {
+    id: "entrepreneurship",
+    name: "Entrepreneurship",
+    symbol: "◎",
+    color: "orange",
+  },
+  { id: "small-business", name: "Small business", symbol: "✳", color: "green" },
+  { id: "marketing", name: "Marketing", symbol: "◒", color: "pink" },
+  { id: "design", name: "Product design", symbol: "✦", color: "blue" },
+  { id: "coding", name: "Coding", symbol: "◎", color: "orange" },
+  { id: "digital", name: "Digital confidence", symbol: "✳", color: "green" },
+  { id: "photography", name: "Photography", symbol: "◒", color: "pink" },
+  { id: "art", name: "Art", symbol: "✦", color: "blue" },
+  { id: "architecture", name: "Architecture", symbol: "◎", color: "orange" },
+  {
+    id: "interior-design",
+    name: "Interior design",
+    symbol: "✳",
+    color: "green",
+  },
+  { id: "gardening", name: "Gardening", symbol: "◒", color: "pink" },
+  { id: "food-cooking", name: "Food & cooking", symbol: "✦", color: "blue" },
+  { id: "baking", name: "Baking", symbol: "◎", color: "orange" },
+  { id: "travel", name: "Travel", symbol: "✳", color: "green" },
+  { id: "music", name: "Music", symbol: "◒", color: "pink" },
+  {
+    id: "film-television",
+    name: "Film & television",
+    symbol: "✦",
+    color: "blue",
+  },
+  { id: "sport", name: "Sport", symbol: "◎", color: "orange" },
+  {
+    id: "beauty-skincare",
+    name: "Beauty & skincare",
+    symbol: "✳",
+    color: "green",
+  },
+  { id: "sustainability", name: "Sustainability", symbol: "◒", color: "pink" },
+  { id: "diy-crafts", name: "DIY & crafts", symbol: "✦", color: "blue" },
 ];
 export const topics: Topic[] = [
   { id: "web", interest_id: "technology", name: "How the web works" },
@@ -44,10 +138,10 @@ export const topics: Topic[] = [
   { id: "ecosystems", interest_id: "nature", name: "Ecosystems" },
   { id: "visual", interest_id: "design", name: "Visual thinking" },
   { id: "everyday", interest_id: "design", name: "Everyday design" },
-  { id: "space", interest_id: "science", name: "Space" },
+  { id: "space", interest_id: "space", name: "Space" },
   { id: "physics", interest_id: "science", name: "Everyday physics" },
-  { id: "language", interest_id: "culture", name: "Language" },
-  { id: "history", interest_id: "culture", name: "Small histories" },
+  { id: "language", interest_id: "languages", name: "Language" },
+  { id: "history", interest_id: "history", name: "Small histories" },
 ];
 export const lessons: Lesson[] = [
   {
@@ -452,4 +546,23 @@ export function topicFor(lesson: Lesson) {
 }
 export function interestFor(lesson: Lesson) {
   return interests.find((i) => i.id === topicFor(lesson).interest_id);
+}
+
+// Preserve the scope of guest preferences saved before the 50-interest catalogue.
+export function migrateInterestIds(ids: string[]) {
+  return [
+    ...new Set(
+      ids.flatMap((id) =>
+        id === "science"
+          ? [id, "space"]
+          : id === "culture"
+            ? [id, "languages", "history"]
+            : [id],
+      ),
+    ),
+  ];
+}
+export function lessonCount(interestId: string) {
+  return lessons.filter((lesson) => interestFor(lesson)?.id === interestId)
+    .length;
 }
