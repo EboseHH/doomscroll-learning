@@ -205,11 +205,7 @@ function App() {
           </div>
           <div className="sidebar-bottom">
             <Leaf size={23} />
-            <p>
-              Less mindless.
-              <br />
-              More meaningful.
-            </p>
+            <p>Might as well learn something while you scroll</p>
           </div>
         </aside>
         <main id="main" tabIndex={-1}>
@@ -557,10 +553,6 @@ function App() {
         <aside className="right-rail">
           <div className="curiosity-note">
             <Sparkles size={23} />
-            <h2>
-              Your scroll.
-              <br />A better direction.
-            </h2>
             <p>
               You don’t need hours to learn something new. Just a moment of
               curiosity.
@@ -579,11 +571,6 @@ function App() {
               <strong>Saved</strong> keeps the ideas you love.
             </p>
           </div>
-          <p className="rail-foot">
-            Prepared lessons. Human curiosity.
-            <br />
-            No algorithms to keep you here.
-          </p>
         </aside>
       </div>
       <div className="sr-only" role="status" aria-live="polite">
