@@ -467,7 +467,7 @@ function App() {
                     <h2>{lesson.title}</h2>
                     <p className="explanation">{lesson.content}</p>
                     <div className="takeaway">
-                      <span>THE LITTLE TAKEAWAY</span>
+                      <span>your little takeaway</span>
                       <p>{lesson.takeaway}</p>
                     </div>
                     <div className="card-footer">
