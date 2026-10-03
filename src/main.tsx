@@ -362,7 +362,9 @@ function App() {
                     <span className="art-label">
                       A SMALL MOMENT OF DISCOVERY
                     </span>
-                    <div className={`illustration ${interest?.id}`}>
+                    <div
+                      className={`illustration ${{ green: "nature", pink: "design", blue: "science", orange: "culture" }[interest?.color ?? "green"]}`}
+                    >
                       <span />
                       <span />
                       <span />

@@ -1,6 +1,6 @@
 # Doomscroll Learning
 
-A mobile-first web prototype that turns scrolling into learning. Browse 12 prepared, complete lessons across Nature, Design, Science and Culture without an account or any API keys.
+A mobile-first web prototype that turns scrolling into learning. Browse 48 prepared, complete lessons across Parenting (teen communication), Career growth, Workplace skills, Managing your time, Digital confidence, Technology, SQL & data, Nature, Design, Science and Culture without an account or any API keys.
 
 ## Run locally
 
@@ -45,3 +45,9 @@ Content lives in separate typed collections in `src/data.ts`. Stable IDs connect
 ## Deferred
 
 Accounts, a database, lesson progress, content management and recommendations beyond interest filtering. Scrolling never counts as completing a lesson. See [the data-model guide](docs/data-model.md) for the planned database and how it differs from this prototype.
+
+## Content scope and source checks
+
+This version includes introductory SQL and data modelling, practical career lessons, everyday technology/science/language, and general teen communication examples. Original lesson IDs remain valid for existing browser saves.
+
+Newborn care, cord care, bathing, weaning, potty training and infant sleep lessons are deferred. The request to the NHS washing-and-bathing page was blocked by the workspace proxy (CONNECT 403); its content was not retrieved. Other proposed NHS pages were not live-checked. No NHS attribution or health guidance is published in this update. Those topics require accessible authoritative sources and review before adding them.

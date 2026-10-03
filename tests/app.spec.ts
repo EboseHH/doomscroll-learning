@@ -4,7 +4,7 @@ test("mixed feed, personalisation, wildcard and dependent filters", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.locator("article")).toHaveCount(12);
+  await expect(page.locator("article")).toHaveCount(48);
   await page
     .getByRole("button", { name: "Nature", exact: true })
     .last()
@@ -32,11 +32,11 @@ test("mixed feed, personalisation, wildcard and dependent filters", async ({
   ).toHaveValue("");
   await expect(page.locator("article")).toHaveCount(3);
   await page.getByRole("button", { name: "Wildcard", exact: true }).click();
-  await expect(page.locator("article")).toHaveCount(12);
+  await expect(page.locator("article")).toHaveCount(48);
   await page
     .getByRole("combobox", { name: "Filter by interest" })
     .selectOption("science");
-  await expect(page.locator("article")).toHaveCount(3);
+  await expect(page.locator("article")).toHaveCount(7);
   await page.getByRole("button", { name: "For you", exact: true }).click();
   await expect(page.locator("article")).toHaveCount(6);
 });
@@ -96,7 +96,7 @@ test("corrupt storage is safe, interest controls work with keyboard, mobile has 
   });
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/");
-  await expect(page.locator("article")).toHaveCount(12);
+  await expect(page.locator("article")).toHaveCount(48);
   await expect(
     page.getByRole("button", { name: "Saved 1", exact: true }),
   ).toBeVisible();
@@ -106,7 +106,7 @@ test("corrupt storage is safe, interest controls work with keyboard, mobile has 
   await expect(nature).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("article")).toHaveCount(3);
   await page.keyboard.press("Space");
-  await expect(page.locator("article")).toHaveCount(12);
+  await expect(page.locator("article")).toHaveCount(48);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,
@@ -164,4 +164,42 @@ test("feed controls and content meet automated accessibility checks", async ({
       nodes: v.nodes.map((n) => n.target),
     })),
   ).toEqual([]);
+});
+
+test("parenting and SQL collections filter and save correctly", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page
+    .getByRole("button", { name: "SQL & data", exact: true })
+    .last()
+    .click();
+  await expect(page.locator("article")).toHaveCount(6);
+  await page
+    .getByRole("combobox", { name: "Filter by topic" })
+    .selectOption("data-modelling");
+  await expect(page.locator("article")).toHaveCount(3);
+  await page
+    .getByRole("button", {
+      name: "Save lesson: A save is a relationship, not a copy of a lesson.",
+      exact: true,
+    })
+    .click();
+  await page.getByRole("button", { name: "Saved 1", exact: true }).click();
+  await expect(page.locator("article")).toHaveCount(1);
+  await page.getByRole("button", { name: "Discover", exact: true }).click();
+  await page
+    .getByRole("button", { name: "SQL & data", exact: true })
+    .last()
+    .click();
+  await page
+    .getByRole("button", { name: "Parenting", exact: true })
+    .last()
+    .click();
+  await expect(page.locator("article")).toHaveCount(3);
+  await expect(
+    page.getByRole("heading", {
+      name: "Start a difficult conversation by listening.",
+    }),
+  ).toBeVisible();
 });
