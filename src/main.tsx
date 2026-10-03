@@ -220,11 +220,9 @@ function App() {
                   ? "Follow your curiosity."
                   : "A little curiosity goes a long way."}
             </h1>
-            <p>
-              {mode === "saved"
-                ? "Your collection of things worth coming back to."
-                : "Small lessons. Fresh perspectives. Something worth taking with you."}
-            </p>
+            {mode === "saved" && (
+              <p>Your collection of things worth coming back to.</p>
+            )}
           </div>
           <section
             className="interests-panel"
